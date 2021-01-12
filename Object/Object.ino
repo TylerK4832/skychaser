@@ -28,13 +28,13 @@ void setup() {
   vw_set_ptt_pin(transmit_en_pin);
   vw_set_ptt_inverted(true); // Required for DR3100
   vw_setup(2000);   // Bits per sec
-  
+
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Adafruit BMP388 / BMP390 test");
 
   if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
-  //if (! bmp.begin_SPI(BMP_CS)) {  // hardware SPI mode  
+  //if (! bmp.begin_SPI(BMP_CS)) {  // hardware SPI mode
   //if (! bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
     while (1);
@@ -57,7 +57,7 @@ void loop() {
  Serial.print(altitude);
   Serial.println(" m");
 
-  
+
   char msg[String(altitude).length] = altidude;
 
 
@@ -66,9 +66,6 @@ void loop() {
   vw_wait_tx(); // Wait until the whole message is gone
   digitalWrite(led_pin, LOW);
   delay(1000);
- 
-
-  
   Serial.println();
-  delay(2000);
+
 }
