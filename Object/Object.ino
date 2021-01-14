@@ -16,8 +16,8 @@ Adafruit_BMP3XX bmp;
 
 #include <VirtualWire.h>
 
-const int led_pin = 11;
-const int transmit_pin = 12;
+const int led_pin = 9;
+const int transmit_pin = 8;
 const int receive_pin = 2;
 const int transmit_en_pin = 3;
 
