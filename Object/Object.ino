@@ -15,7 +15,7 @@ Adafruit_BMP3XX bmp;
 
 
 #include <RH_RF22.h>
-
+RH_ASK driver;
 
 const int led_pin = 9;
 const int transmit_pin = 8;
@@ -24,11 +24,10 @@ const int transmit_en_pin = 3;
 
 void setup() {
   // Initialise the IO and ISR
-  vw_set_tx_pin(transmit_pin);
-  vw_set_rx_pin(receive_pin);
-  vw_set_ptt_pin(transmit_en_pin);
-  vw_set_ptt_inverted(true); // Required for DR3100
-  vw_setup(2000);   // Bits per sec
+   if (!driver.init())
+         Serial.println("init failed");
+}
+ 
 
   Serial.begin(115200);
   while (!Serial);
@@ -49,6 +48,7 @@ void setup() {
 }
 
 void loop() {
+  
   if (! bmp.performReading()) {
     Serial.println("Failed to perform reading :(");
     return;
@@ -63,8 +63,11 @@ void loop() {
 
 
   digitalWrite(led_pin, HIGH); // Flash a light to show transmitting
-  vw_send((uint8_t *)msg, String(altitude).length);
-  vw_wait_tx(); // Wait until the whole message is gone
+     const char *msg = "Hello World!";
+    driver.send((uint8_t *)msg, strlen(msg));
+    driver.waitPacketSent();
+    delay(1000);
+
   digitalWrite(led_pin, LOW);
   delay(1000);
   Serial.println();
