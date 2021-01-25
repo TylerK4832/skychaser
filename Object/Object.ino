@@ -14,7 +14,7 @@
 Adafruit_BMP3XX bmp;
 
 
-#include <RH_RF22.h>
+#include <RH_ASK.h>
 RH_ASK driver;
 
 const int led_pin = 9;
@@ -24,14 +24,14 @@ const int transmit_en_pin = 3;
 
 void setup() {
   // Initialise the IO and ISR
-   if (!driver.init())
+   if (!driver.init()){
          Serial.println("init failed");
 }
  
 
   Serial.begin(115200);
-  while (!Serial);
-  Serial.println("Adafruit BMP388 / BMP390 test");
+  while (!Serial){
+  
 
   if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
   //if (! bmp.begin_SPI(BMP_CS)) {  // hardware SPI mode
@@ -39,7 +39,7 @@ void setup() {
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
     while (1);
   }
-
+  }
   // Set up oversampling and filter initialization
   bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
   bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
@@ -58,12 +58,13 @@ void loop() {
  Serial.print(altitude);
   Serial.println(" m");
 
-
-  char msg[String(altitude).length] = altidude;
-
+  String strAlt = String(altitude);
+  int msgLen = strAlt.length();
+  char msg[msgLen];
+ strAlt.toCharArray(msg, msgLen);
 
   digitalWrite(led_pin, HIGH); // Flash a light to show transmitting
-     const char *msg = "Hello World!";
+    
     driver.send((uint8_t *)msg, strlen(msg));
     driver.waitPacketSent();
     delay(1000);
