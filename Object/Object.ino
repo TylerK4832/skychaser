@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
-#include "Adafruit_BMP3XX.h"
+#include <Adafruit_BMP3XX.h>
 
 #define BMP_SCK 13
 #define BMP_MISO 12
@@ -14,7 +14,8 @@
 Adafruit_BMP3XX bmp;
 
 
-#include <VirtualWire.h>
+#include <RH_RF22.h>
+
 
 const int led_pin = 9;
 const int transmit_pin = 8;
