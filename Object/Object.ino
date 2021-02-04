@@ -77,10 +77,7 @@ void loop() {
    }
   }
   
-  String latitude = String(lat,6);
-  String longitude = String(lon,6);
-  Serial.println(latitude+";"+longitude);
-  delay(1000);
+
 
 
 
@@ -96,8 +93,10 @@ void loop() {
   double altitude = bmp.readAltitude(SEALEVELPRESSURE_HPA);
   Serial.print(altitude);
   Serial.println(" m");
-
-  String strAlt = String(altitude) + ","  String(lat) + "," + String(lon);
+  String latitude = String(lat,6);
+  String longitude = String(lon,6);
+  Serial.println(latitude+";"+longitude);
+  String strAlt = String(altitude) + ","  latitude + "," + longitude;
   int msgLen = strAlt.length();
   char msg[msgLen];
   strAlt.toCharArray(msg, msgLen);
