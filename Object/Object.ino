@@ -20,7 +20,7 @@ Adafruit_BMP3XX bmp;
 #include <RH_ASK.h>
 RH_ASK driver;
 
-long   lat,lon; // create variable for latitude and longitude object
+//long   lat,lon; // create variable for latitude and longitude object
 float lat = 28.5458,lon = 77.1703; // create variable for latitude and longitude object 
 SoftwareSerial gpsSerial(3,4);//rx,tx
 TinyGPS gps; // create gps object
@@ -96,7 +96,7 @@ void loop() {
   String latitude = String(lat,6);
   String longitude = String(lon,6);
   Serial.println(latitude+";"+longitude);
-  String strAlt = String(altitude) + ","  latitude + "," + longitude;
+  String strAlt = String(altitude) + "," +  latitude + "," + longitude;
   int msgLen = strAlt.length();
   char msg[msgLen];
   strAlt.toCharArray(msg, msgLen);
@@ -107,7 +107,7 @@ void loop() {
   delay(1000);
 
   digitalWrite(led_pin, LOW);
-  delay(1000);
+
   Serial.println();
   
 }
