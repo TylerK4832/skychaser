@@ -58,7 +58,7 @@ void setup() {
 
 void loop() {
   
-  while(gpsSerial.available()){ // check for gps data
+  if(gpsSerial.available()){ // check for gps data
     if(gps.encode(gpsSerial.read()))// encode gps data
     { 
     gps.f_get_position(&lat,&lon); // get latitude and longitude
@@ -75,7 +75,7 @@ void loop() {
     //Serial.print(" ");
     
    }
-  }
+  
   
 
 
