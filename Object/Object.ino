@@ -3,7 +3,7 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP3XX.h>
-
+#include <RH_ASK.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS.h>
 
@@ -17,18 +17,13 @@
 Adafruit_BMP3XX bmp;
 
 
-#include <RH_ASK.h>
-RH_ASK driver;
+RH_ASK driver(2000, 8,7);
 
 //long   lat,lon; // create variable for latitude and longitude object
-float lat = 28.5458,lon = 77.1703; // create variable for latitude and longitude object 
-SoftwareSerial gpsSerial(3,4);//rx,tx
+float lat = 11.111,lon = 11.111; // create variable for latitude and longitude object 
+SoftwareSerial gpsSerial(4,3);//rx,tx
 TinyGPS gps; // create gps object
 
-const int led_pin = 9;
-const int transmit_pin = 8;
-const int receive_pin = 2;
-const int transmit_en_pin = 3;
 
 void setup() {
   
@@ -57,7 +52,7 @@ void setup() {
 
 void loop() {
   
- /* if(gpsSerial.available()){ // check for gps data
+if(gpsSerial.available()){ // check for gps data
     if(gps.encode(gpsSerial.read()))// encode gps data
     { 
     gps.f_get_position(&lat,&lon); // get latitude and longitude
@@ -65,17 +60,39 @@ void loop() {
 
     Serial.print("Position: ");
     Serial.print("Latitude:");
-    Serial.print(lat,6);
+    Serial.print(lat,3);
     Serial.print(";");
     Serial.print("Longitude:");
-    Serial.println(lon,6); 
+    Serial.println(lon,3); 
 
     Serial.print(lat);
     Serial.print(" ");
     
-   }else Serial.println("can'tgps encode");
-  }else Serial.println("Gps not available");*/
-  /*
+   }else{
+    Serial.println("can't gps encode");
+     String strAlt = "error - gps encode" ;
+  int msgLen = strAlt.length();
+  char msg[msgLen];
+  strAlt.toCharArray(msg, msgLen);
+
+  driver.send((uint8_t *)msg, strlen(msg));
+  driver.waitPacketSent();
+  delay(500);
+  return;
+   }
+  }else{
+     String strAlt = "Gps not available";
+  int msgLen = strAlt.length();
+  char msg[msgLen];
+  strAlt.toCharArray(msg, msgLen);
+
+  driver.send((uint8_t *)msg, strlen(msg));
+  driver.waitPacketSent();
+  delay(500);
+  Serial.println("Gps not available");
+  return;
+  }
+  
 
 
 
@@ -85,7 +102,7 @@ void loop() {
   if (! bmp.performReading()) {
     Serial.println("Failed to perform reading :(" + bmp.performReading());
     return;
-  }*/
+  }
     if (! bmp.performReading()) {
     Serial.println("Failed to perform reading :(");
     return;
@@ -98,20 +115,18 @@ void loop() {
   Serial.println(" m");
   Serial.print("temp");
   Serial.println(temp);
-  String latitude = String(lat,6);
-  String longitude = String(lon,6);
+  String latitude = String(lat,3);
+  String longitude = String(lon,3);
   Serial.println(latitude+";"+longitude);
-  /*String strAlt = String(altitude) + "," +  latitude + "," + longitude;
+  String strAlt = String(altitude) + "," +  latitude + "," + longitude;
   int msgLen = strAlt.length();
   char msg[msgLen];
   strAlt.toCharArray(msg, msgLen);
 
-  digitalWrite(led_pin, HIGH); // Flash a light to show transmitting
   driver.send((uint8_t *)msg, strlen(msg));
   driver.waitPacketSent();
-  delay(1000);
+  delay(500);
 
-  digitalWrite(led_pin, LOW);*/
 
   Serial.println();
   delay(500);
