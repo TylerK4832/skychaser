@@ -5,7 +5,7 @@
 #include <Adafruit_BMP3XX.h>
 #include <RH_ASK.h>
 #include <SoftwareSerial.h>
-#include <TinyGPS.h>
+#include <TinyGPS++.h>
 
 #define BMP_SCK 13
 #define BMP_MISO 12
@@ -20,14 +20,16 @@ Adafruit_BMP3XX bmp;
 RH_ASK driver(2000, 8,7);
 
 //long   lat,lon; // create variable for latitude and longitude object
-float lat = 11.111,lon = 11.111; // create variable for latitude and longitude object 
-SoftwareSerial gpsSerial(4,3);//rx,tx
-TinyGPS gps; // create gps object
-
+String lat = "11.111",lon = "11.111"; // create variable for latitude and longitude object 
+SoftwareSerial ss(6,4);//rx,tx  
+TinyGPSPlus gps; // create gps object
+String speed;
+String courseDeg;
 
 void setup() {
   
   Serial.begin(115200);
+
   Serial.println("initiating");
   // Initialise the IO and ISR
   if (!driver.init()){
@@ -35,8 +37,7 @@ void setup() {
 
   }
 
-  while (!Serial);
-  
+    
  if (! bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
     while (1);
@@ -51,53 +52,38 @@ void setup() {
 }
 
 void loop() {
-  
-if(gpsSerial.available()){ // check for gps data
-    if(gps.encode(gpsSerial.read()))// encode gps data
-    { 
-    gps.f_get_position(&lat,&lon); // get latitude and longitude
-    // display position
-
-    Serial.print("Position: ");
+  if (gps.location.isValid()){
+    lat = String(gps.location.lat(),6);
+    
+    lon = String(gps.location.lng(),6);
+    Serial.print("Position:\n");
     Serial.print("Latitude:");
-    Serial.print(lat,3);
+    Serial.print(lat);
     Serial.print(";");
     Serial.print("Longitude:");
-    Serial.println(lon,3); 
+    Serial.println(lon); 
+  }
+  else
+  {
+    Serial.print(F("INVALID"));
+  }
+  if (gps.speed.isUpdated()){
+    speed = String(gps.speed.mps(),4);
+    Serial.print("Speed: ");
+    Serial.println(speed);
+  }
+  if (gps.course.isUpdated()){
+    courseDeg = String(gps.course.deg(),6);
+     Serial.print("Course: ");
+    Serial.println(courseDeg);
+  }
+    
+    
+     
 
     Serial.print(lat);
     Serial.print(" ");
     
-   }else{
-    Serial.println("can't gps encode");
-     String strAlt = "error - gps encode" ;
-  int msgLen = strAlt.length();
-  char msg[msgLen];
-  strAlt.toCharArray(msg, msgLen);
-
-  driver.send((uint8_t *)msg, strlen(msg));
-  driver.waitPacketSent();
-  delay(500);
-  return;
-   }
-  }else{
-     String strAlt = "Gps not available";
-  int msgLen = strAlt.length();
-  char msg[msgLen];
-  strAlt.toCharArray(msg, msgLen);
-
-  driver.send((uint8_t *)msg, strlen(msg));
-  driver.waitPacketSent();
-  delay(500);
-  Serial.println("Gps not available");
-  return;
-  }
-  
-
-
-
-
-
 
   if (! bmp.performReading()) {
     Serial.println("Failed to perform reading :(" + bmp.performReading());
@@ -115,19 +101,18 @@ if(gpsSerial.available()){ // check for gps data
   Serial.println(" m");
   Serial.print("temp");
   Serial.println(temp);
-  String latitude = String(lat,3);
-  String longitude = String(lon,3);
-  Serial.println(latitude+";"+longitude);
-  String strAlt = String(altitude) + "," +  latitude + "," + longitude;
+  
+  Serial.println(lat+";"+lon);
+  String strAlt = String(altitude) + "," +  lat + "," + lon;
   int msgLen = strAlt.length();
   char msg[msgLen];
   strAlt.toCharArray(msg, msgLen);
 
   driver.send((uint8_t *)msg, strlen(msg));
   driver.waitPacketSent();
-  delay(500);
+//  delay(500);
 
 
   Serial.println();
-  delay(500);
+delay(250);
 }
