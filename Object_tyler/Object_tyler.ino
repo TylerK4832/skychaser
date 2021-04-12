@@ -119,17 +119,9 @@ delay(250);
   
   
   
-  button_state = digitalRead(button_pin);
-if(button_state == HIGH)
-{
+
 const char text[] = "Your Button State is HIGH";
 radio.write(&text, sizeof(text));                  //Sending the message to receiver
-}
-else
-{
-const char text[] = "Your Button State is LOW";
-radio.write(&text, sizeof(text));                  //Sending the message to receiver 
-}
-radio.write(&button_state, sizeof(button_state));  //Sending the message to receiver 
+
 delay(1000);
 }
