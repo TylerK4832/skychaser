@@ -1,13 +1,52 @@
-long droneLat, droneLong, droneAlt, objectLat, drone heading,objectLong, objectAlt;
-
+long droneLat, droneLong, droneAlt, objectLat, drone heading,objectLong, objectAlt, distX, DistY, DistZ;
+int offset; //so drone doesn't crash into object
 
 void loop{
-
+	update();
+	if(distX > 0){ //Move roll
+		rollRight();
+	}else if(distX < 0){
+		rollLeft();
+	}else if(distX == 0){
+		println("X is in the right position")
+	}
+	
+	if(distY > 0){ //move Pitch
+		pitchForward();
+	}else if(distY < 0){
+		pitchBackward();
+	}else if(distY == 0){
+		println("Y is in the right position")
+	}
+	
+	if(distZ > 0){ //Move Throttle
+		throttleUp();
+	}else if(distZ < 0){
+		throttleDown;
+	}else if(distZ == 0){
+		println("Z is in the right position")
+	}
+	
 }
 
 void getLat(object){}
 void getLong(object){}
 void getAlt(object){}
 void getBearing(){}
-long getDist(){}
+long getDist(plane){
+	return truedist - offset
+} //X,Y,or Z
+bool checkDistdirection(){}
 
+void update(){
+	droneLat = getLat(drone);
+	droneLong = getLong(drone);
+    droneAlt = getAlt(drone);
+	droneHeading = getHeading();
+	objectLat = getLat(object);
+	objectLong = getLong(object);
+	objectAlt = getAlt(object);
+	distX = getDist("X");
+	distY = getDist("Y");
+	distZ = getDist("Z");
+}
