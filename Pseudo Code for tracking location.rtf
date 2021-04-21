@@ -1,14 +1,29 @@
 long droneLat, droneLong, droneAlt, objectLat, drone heading,objectLong, objectAlt, distX, DistY, DistZ;
 int offset; //so drone doesn't crash into object
 
+int yawChannel; //TODO
+int changeYawValue = 15;
+int pitchChannel; //TODO
+int changePitchValue = 20
+int throttleChannel; //TODO
+int ChangeThrottleValue 60;
+int rollChannel; //TODO
+int changeRollValue = changePitchValue;
+int defaultPPMvalue = 1496;
+int numChannels = 8;
+int ppm[numChannels];
+
 void loop{
 	update();
+	faceDirection(0.0);
 	if(distX > 0){ //Move roll
 		rollRight();
 	}else if(distX < 0){
 		rollLeft();
 	}else if(distX == 0){
 		println("X is in the right position")
+		ppm[rollChannel] = defaultPPMvalue;
+
 	}
 	
 	if(distY > 0){ //move Pitch
@@ -17,6 +32,8 @@ void loop{
 		pitchBackward();
 	}else if(distY == 0){
 		println("Y is in the right position")
+		ppm[pitchChannel] = defaultPPMvalue;
+
 	}
 	
 	if(distZ > 0){ //Move Throttle
@@ -49,4 +66,39 @@ void update(){
 	distX = getDist("X");
 	distY = getDist("Y");
 	distZ = getDist("Z");
+}
+void rollRight(){
+	ppm[rollChannel] = defaultPPMvalue + changeRollValue;
+}
+void rollLeft(){
+	ppm[rollChannel] = defaultPPMvalue - changeRollValue;
+}
+void pitchBackward(){
+	ppm[pitchChannel] = defaultPPMvalue + changePitchValue;
+}
+void pitchForward(){
+	ppm[pitchChannel] = defaultPPMvalue - changePitchValue;
+}
+void throttleDown(){
+	ppm[throttleChannel] -= ChangeThrottleValue;
+}
+void throttleUp(){
+	ppm[throttleChannel] += ChangeThrottleValue;
+}
+void yawLeft(){
+	ppm[yawChannel] = defaultPPMvalue + changeYawValue;
+}
+void yawRight(){
+	ppm[yawChannel] = defaultPPMvalue - changeYawValue;
+}
+void faceDirection(double angle){ //turns drone to desired heading
+	while(droneHeading != angle){
+		if(droneHeading > angle){
+			yawLeft();
+		}else if(droneHeading < angle){
+			yawRight();
+		}
+	}
+	ppm[yawChannel] = defaultPPMvalue;
+
 }
