@@ -49,7 +49,7 @@ unsigned long codes[] = {2724039285,//IR Codes
 
 //////////////////////CONFIGURATION///////////////////////////////
 #define chanel_number 12  //set the number of chanels
-#define default_servo_value 1495  //set the default servo value
+#define default_servo_value 1496  //set the default servo value
 #define PPM_FrLen 22500  //set the PPM frame length in microseconds (1ms = 1000µs)
 #define PPM_PulseLen 300  //set the pulse length
 #define onState 1  //set polarity of the pulses: 1 is positive, 0 is negative
@@ -112,10 +112,15 @@ void loop(){
      enter();
      enable();
      Clear();
+     one();
+     two();
+     three();
+     four();
+     five();
      
      
 
-    delay(25);
+    delay(15);
 
      irrecv.resume();
       }
@@ -175,7 +180,7 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
   }//else ppm[1] = 1500-3;
  }
  
- void right(){ roll right
+ void right(){ //roll right
    if(results.value == codes[3]){
     Serial.println("right");
     ppm[1] = 1500+amountChange;
@@ -226,6 +231,35 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
       }
    }
 
-
+void one(){
+ if(result ==codes[8]){
+       ppm[0] = 1500;
+     
+      }
+   }
+void two(){
+ if(result == codes[9]){
+       ppm[0] = 1700;
+     
+      }
+   }
+void three(){
+ if(result == codes[10]){
+       ppm[0] = 1800;
+     
+      }
+   }
+void four(){
+ if(result == codes[11]){
+       ppm[0] = 1900;
+     
+      }
+   }
+void five(){
+   if(result == codes[12]){
+       ppm[0] -= 150 ;
+     
+      }
+}
  
  
