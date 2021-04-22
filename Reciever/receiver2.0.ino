@@ -13,13 +13,12 @@ radio.openReadingPipe(0, address);   //Setting the address at which we will rece
 radio.setPALevel(RF24_PA_MIN);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
 radio.startListening();              //This sets the module as receiver
 }
-void loop()
-{
-if (radio.available())              //Looking for the data.
-{
+void loop(){
+if (radio.available()){           //Looking for the data.
 char text[32] = "";                 //Saving the incoming data
 radio.read(&text, sizeof(text));    //Reading the data
 radio.read(&button_state, sizeof(button_state));    //Reading the data
+Serial.println(text);
 if(button_state == HIGH)
 {
 digitalWrite(6, HIGH);

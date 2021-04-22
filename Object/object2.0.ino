@@ -112,14 +112,14 @@ void loop() {
   Serial.print("temp");
   Serial.println(temp);
   */
-  Serial.println(lat+";"+lon);
+ /* Serial.println(lat+";"+lon);
   String strAlt = String(altitude) + "," +  lat + "," + lon;
   int msgLen = strAlt.length();
   char msg[msgLen];
   strAlt.toCharArray(msg, msgLen);
 
   driver.send((uint8_t *)msg, strlen(msg));
-  driver.waitPacketSent();
+  driver.waitPacketSent();*/
 //  delay(500);
 
 

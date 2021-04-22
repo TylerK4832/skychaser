@@ -6,6 +6,22 @@
 #include <RH_ASK.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+RF24 radio(9, 10); // CE, CSN
+const byte address[6] = "00001";
+boolean button_state = 0;
+int led_pin = 3;
+void setup() {
+pinMode(6, OUTPUT);
+Serial.begin(9600);
+radio.begin();
+radio.openReadingPipe(0, address);   //Setting the address at which we will receive the data
+radio.setPALevel(RF24_PA_MIN);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
+radio.startListening();              //This sets the module as receiver
+char text[32] = "";
+
 
 #define BMP_SCK 13
 #define BMP_MISO 12
@@ -42,6 +58,13 @@ const int numChannels = 8;
 int ppm[numChannels];
 
 void loop(){
+	if (radio.available()){        		   //Looking for the data.
+								            //Saving the incoming data
+		radio.read(&text, sizeof(text));    //Reading the data
+		radio.read(&button_state, sizeof(button_state));    //Reading the data
+		Serial.println(text);
+		updateObjectInfo(text);
+	}
 	if (gps.location.isValid()){
 		update();
 		
@@ -84,16 +107,25 @@ void getLat(String object){
     }
 }
 void getLong(String object){
+	if(object == "drone"){
 	return String(gps.location.lng(),6);
+	}else{
+        
+    }
 }
 void getAlt(String object){
+	if(object == "drone"){
 	return bmp.readAltitude(SEALEVELPRESSURE_HPA);
+	}else{
+        
+    }
 
 }
 void getBearing(){
 	return String(gps.course.deg(),6);
 }
 long getDist(plane){
+	//TODO
 	return truedist - offset
 } //X,Y,or Z
 bool checkDistdirection(){}
@@ -145,3 +177,4 @@ void faceDirection(double angle){ //turns drone to desired heading
 	ppm[yawChannel] = defaultPPMvalue;
 
 }
+void updateObjectInfo
