@@ -170,14 +170,14 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
    if(result == codes[1]){
     Serial.println("up");
     ppm[2] = 1500-amountChange;
-  }//else ppm[1] = 1500-3;
+  }//else ppm[2] = 1500-3;
  }
  
  void down(){ //pitch backward
    if(result == codes[2]){
     Serial.println("down");
     ppm[2] = 1500+amountChange;
-  }//else ppm[1] = 1500-3;
+  }//else ppm[2] = 1500-3;
  }
  
  void right(){ //roll right
