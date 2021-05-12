@@ -46,14 +46,15 @@ unsigned long codes[] = {2724039285,//IR Codes
 2724004605,
 2724048720};
 //this programm will put out a PPM signal
-
+unsigned long int a,b,c;
+int x[15],ch1[15],ch[7],i;
 //////////////////////CONFIGURATION///////////////////////////////
 #define chanel_number 12  //set the number of chanels
 #define default_servo_value 1496  //set the default servo value
 #define PPM_FrLen 22500  //set the PPM frame length in microseconds (1ms = 1000µs)
 #define PPM_PulseLen 300  //set the pulse length
 #define onState 1  //set polarity of the pulses: 1 is positive, 0 is negative
-#define sigPin 3  //set PPM signal output pin on the arduino
+#define sigPin 5  //set PPM signal output pin on the arduino
 ////////////////////////////////////////////////////////////////// 
 //IR stuff
 #include <IRremote.h>
@@ -68,6 +69,10 @@ unsigned long result;
 int ppm[chanel_number];
 
 void setup(){  
+  Serial.begin(9600);
+  pinMode(2, INPUT);
+attachInterrupt(digitalPinToInterrupt(2), read_me, FALLING);
+  // enabling interrupt at pin 2
 irrecv.enableIRIn();  // enable IR
 Serial.begin(9600);
 Serial.println("ready");
@@ -76,10 +81,10 @@ Serial.println(codes[1]);
   for(int i=0; i<chanel_number; i++){
     ppm[i]= default_servo_value;
   }
-//ppm[1] = 1501;
-//ppm[2] = 1602;
-//ppm[3] = 1703;
-//ppm[4] = 1804;
+ppm[1] = 1501;
+ppm[2] = 1602;
+ppm[3] = 1703;
+ppm[4] = 1804;
   pinMode(sigPin, OUTPUT);
   digitalWrite(sigPin, !onState);  //set the PPM signal pin to the default state (off)
   
@@ -93,15 +98,21 @@ Serial.println(codes[1]);
   TIMSK1 |= (1 << OCIE1A); // enable timer compare interrupt
   sei();
 ppm[0] = 750;
-
+ 
 }
 
 void loop(){
+
      if(irrecv.decode(&results))    //read ir code
    {
     result = results.value;
     Serial.println(result);
     Serial.println();
+
+    read_rc();
+
+
+delay(100);
      left();
      right();
      power();
@@ -124,8 +135,23 @@ void loop(){
 
      irrecv.resume();
       }
-}
 
+      read_rc();
+
+Serial.print(ch[1]);Serial.print("\t");
+Serial.print(ch[2]);Serial.print("\t");
+Serial.print(ch[3]);Serial.print("\t");
+Serial.print(ch[4]);Serial.print("\t");
+Serial.print(ch[5]);Serial.print("\t");
+Serial.print(ch[6]);Serial.print("\n");
+ppm[0] = ch[3];
+ppm[1] = ch[1];
+ppm[2] = ch[2];
+ppm[3] = ch[4];
+ppm[4] = ch[5];
+//delay(10);
+
+}
 ISR(TIMER1_COMPA_vect){  //leave this alone
   static boolean state = true;
   
@@ -158,7 +184,6 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
 }
 
 
- 
  void left(){ //roll left
   if(results.value == codes[0]){
     Serial.println("left");
@@ -261,5 +286,25 @@ void five(){
      
       }
 }
- 
+
+
+ void read_me()  {
+ //this code reads value from RC reciever from PPM pin (Pin 2 or 3)
+ //this code gives channel values from 0-1000 values 
+ //    -: ABHILASH :-    //
+a=micros(); //store time value a when pin value falling
+c=a-b;      //calculating time inbetween two peaks
+b=a;        // 
+x[i]=c;     //storing 15 value in array
+i=i+1;       if(i==15){for(int j=0;j<15;j++) {ch1[j]=x[j];
+}
+             i=0;}
+}//copy store all values from temporary array another array after 15 reading  
+void read_rc(){
+int i,j,k=0;
+  for(k=14;k>-1;k--){if(ch1[k]>10000){j=k;}}  //detecting separation space 10000us in that another array                     
+  for(i=1;i<=6;i++){ch[i]=(ch1[i+j]-1000);}}     //assign 6 channel values after separation space
+
+  
+
  
